@@ -51,7 +51,7 @@ public class Login extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Vladimir Script", 0, 40)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(194, 178, 128));
-        jLabel2.setText("Library Management System");
+        jLabel2.setText("Car Management System");
 
         jPanel3.setBackground(new java.awt.Color(194, 178, 128));
 
