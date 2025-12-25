@@ -17,7 +17,7 @@ public class Admin extends javax.swing.JFrame{
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Admin.class.getName());
     private javax.swing.table.TableRowSorter<javax.swing.table.DefaultTableModel> sorter;
         private DefaultTableModel model; 
-    private TableRowSorter<DefaultTableModel> tableSorter;
+    
 
     
     public Admin() {
@@ -32,7 +32,7 @@ public class Admin extends javax.swing.JFrame{
         car.loadAllCars(model);  
         
         // Fix serial numbers
-        fixSerialNumbers();      
+        fixSerialNumbers();
         
         sorter = new javax.swing.table.TableRowSorter<>(model);
         jTable1.setRowSorter(sorter);
@@ -42,8 +42,6 @@ public class Admin extends javax.swing.JFrame{
     javax.swing.table.DefaultTableModel model =
             (javax.swing.table.DefaultTableModel) jTable1.getModel();
     model.setRowCount(0);   // removes all default empty rows
-    
-
 }
        private void fixSerialNumbers() {
         for (int i = 0; i < model.getRowCount(); i++) {
@@ -72,6 +70,8 @@ public class Admin extends javax.swing.JFrame{
         txtSearch = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -85,16 +85,26 @@ public class Admin extends javax.swing.JFrame{
                 {null, null, null, null, null}
             },
             new String [] {
-                "SNo", "Name", "Brand", "PlateNo", "Car Type"
+                "SNo", "Name", "Brand", "Model_No", "Car Type"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Administrations Pannel");
 
-        jPanel2.setBackground(new java.awt.Color(102, 102, 102));
+        jPanel2.setBackground(new java.awt.Color(153, 153, 153));
+        jPanel2.setToolTipText("");
+        jPanel2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         jButton1.setBackground(new java.awt.Color(204, 204, 204));
         jButton1.setText("Add");
@@ -150,6 +160,20 @@ public class Admin extends javax.swing.JFrame{
             }
         });
 
+        jButton5.setText("Back to login menu");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText("Default");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -164,37 +188,48 @@ public class Admin extends javax.swing.JFrame{
                         .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jToggleButton1)
-                        .addGap(12, 12, 12)
-                        .addComponent(jButton2)
-                        .addGap(0, 6, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(78, 78, 78)
-                .addComponent(jButton4)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jButton4)
+                                    .addGroup(jPanel2Layout.createSequentialGroup()
+                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jToggleButton1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(6, 6, 6))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton5)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(31, 31, 31)
+                .addGap(39, 39, 39)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(98, 98, 98)
+                .addGap(90, 90, 90)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jToggleButton1)
                     .addComponent(jButton2))
-                .addGap(28, 28, 28)
-                .addComponent(jButton3)
-                .addGap(42, 42, 42)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3)
+                    .addComponent(jButton6))
+                .addGap(18, 18, 18)
                 .addComponent(jButton4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton5)
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -220,7 +255,7 @@ public class Admin extends javax.swing.JFrame{
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(17, 17, 17))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -255,8 +290,8 @@ public class Admin extends javax.swing.JFrame{
     String brand = javax.swing.JOptionPane.showInputDialog(this, "Enter Brand:");
     if (brand == null || brand.trim().isEmpty()) return;
 
-    String plateNo = javax.swing.JOptionPane.showInputDialog(this, "Enter Plate Number:");
-    if (plateNo == null || plateNo.trim().isEmpty()) return;
+    String ModelNo = javax.swing.JOptionPane.showInputDialog(this, "Enter Model:");
+    if (ModelNo == null || ModelNo.trim().isEmpty()) return;
 
     String carType = javax.swing.JOptionPane.showInputDialog(this, "Enter Car Type:");
     if (carType == null || carType.trim().isEmpty()) return;
@@ -265,8 +300,8 @@ public class Admin extends javax.swing.JFrame{
     int sno = model.getRowCount() + 1;
 
     // Add row to table
-    model.addRow(new Object[] { sno, name, brand, plateNo, carType });
-     car.addNewCar(name, brand, plateNo, carType, model);
+    model.addRow(new Object[] { sno, name, brand, ModelNo, carType });
+     car.addNewCar(name, brand, ModelNo, carType, model);
         
         // Fix serial numbers
         fixSerialNumbers();
@@ -354,14 +389,14 @@ int selectedRow = jTable1.getSelectedRow();
         String brand = JOptionPane.showInputDialog(this, "Update Brand:", currentBrand);
         if (brand == null || brand.trim().isEmpty()) return;
 
-        String plateNo = JOptionPane.showInputDialog(this, "Update Plate Number:", currentPlate);
-        if (plateNo == null || plateNo.trim().isEmpty()) return;
+        String ModelNo = JOptionPane.showInputDialog(this, "Update Model:", currentPlate);
+        if (ModelNo == null || ModelNo.trim().isEmpty()) return;
 
         String carType = JOptionPane.showInputDialog(this, "Update Car Type:", currentType);
         if (carType == null || carType.trim().isEmpty()) return;
 
         // Use Controller to update car
-        car.updateCar(modelRow, name, brand, plateNo, carType, model);
+        car.updateCar(modelRow, name, brand, ModelNo, carType, model);
            // TODO add your handling code here:
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
@@ -369,48 +404,71 @@ int selectedRow = jTable1.getSelectedRow();
 
     javax.swing.table.DefaultTableModel model =
             (javax.swing.table.DefaultTableModel) jTable1.getModel();
-
     int rowCount = model.getRowCount();
-    int colCount = model.getColumnCount();
 
-    // Copy table data into 2D array
-    String[][] data = new String[rowCount][colCount];
-
-    for (int i = 0; i < rowCount; i++) {
-        for (int j = 0; j < colCount; j++) {
-            data[i][j] = model.getValueAt(i, j).toString();
-        }
-    }
-
-    // 🔽 SELECTION SORT by Name (column index = 1)
+    // SELECTION SORT LOGIC
     for (int i = 0; i < rowCount - 1; i++) {
         int minIndex = i;
-
         for (int j = i + 1; j < rowCount; j++) {
-            if (data[j][1].compareToIgnoreCase(data[minIndex][1]) < 0) {
+            // Compare Name column (Index 1)
+            String nameJ = model.getValueAt(j, 1).toString();
+            String nameMin = model.getValueAt(minIndex, 1).toString();
+            
+            if (nameJ.compareToIgnoreCase(nameMin) < 0) {
                 minIndex = j;
             }
         }
-
-        // Swap entire rows
-        String[] temp = data[i];
-        data[i] = data[minIndex];
-        data[minIndex] = temp;
+        // Swap rows directly in the model
+        for (int col = 0; col < model.getColumnCount(); col++) {
+            Object temp = model.getValueAt(i, col);
+            model.setValueAt(model.getValueAt(minIndex, col), i, col);
+            model.setValueAt(temp, minIndex, col);
+        }
     }
-
-    // Clear table and reinsert sorted data
-    model.setRowCount(0);
-
-    for (int i = 0; i < rowCount; i++) {
-        model.addRow(data[i]);
-    }
-  // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         car.saveAllCars(model);
-        JOptionPane.showMessageDialog(this, "All data saved to file!");        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(this, "All data saved to file!");  
+        Controller.car.syncAllTables();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    int rowCount = model.getRowCount();
+
+    for (int i = 0; i < rowCount - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < rowCount; j++) {
+            // Compare SNo column (Index 0) as Integers
+            int snoJ = Integer.parseInt(model.getValueAt(j, 0).toString());
+            int snoMin = Integer.parseInt(model.getValueAt(minIndex, 0).toString());
+            
+            if (snoJ < snoMin) {
+                minIndex = j;
+            }
+        }
+        // Swap rows
+        for (int col = 0; col < model.getColumnCount(); col++) {
+            Object temp = model.getValueAt(i, col);
+            model.setValueAt(model.getValueAt(minIndex, col), i, col);
+            model.setValueAt(temp, minIndex, col);
+        }
+    }
+    
+    // Clear any active search filters
+    if (sorter != null) sorter.setRowFilter(null);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        Login loginFrame = new Login();
+
+        // Make the login frame visible
+        loginFrame.setVisible(true);
+
+        // Close or hide the current Admin frame
+        this.dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -442,6 +500,8 @@ int selectedRow = jTable1.getSelectedRow();
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

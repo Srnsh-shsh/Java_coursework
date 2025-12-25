@@ -1,1 +1,9 @@
-asdf,asdf,asdf,asdf
+Civic,Honda,HD-101,Sedan
+Model 3,Tesla,TS-505	,Electric
+Mustang ,Ford ,FR-302 ,Sports
+Corolla,Toyota ,TY-202 ,Sedan
+Wrangler ,Jeep ,JP-707 ,SUV
+A8 ,Audi ,AD-909 ,Luxury
+911 ,Porsche ,PR-808 ,Sports
+Chiron,Bugatti,BU-100,Sports
+Huriccan,Lamborghini,LA-900,Sports

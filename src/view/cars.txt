@@ -1,1 +1,0 @@
-1,Toyota,Corolla,BA-1234,Sedan
