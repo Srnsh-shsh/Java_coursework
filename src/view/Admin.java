@@ -512,5 +512,4 @@ DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
-
 }
