@@ -185,18 +185,49 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-    String username = txtUsername.getText();
-    String password = new String(txtpassword.getPassword());
+    String username = txtUsername.getText().trim();
+    String password = new String(txtpassword.getPassword()).trim();
 
+    // 1. Empty field validation
+    if (username.isEmpty() || password.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Username and Password cannot be empty!",
+            "Input Error",
+            javax.swing.JOptionPane.ERROR_MESSAGE
+        );
+        return;
+    }
+
+    // 2. Username length validation (MAX 11 characters)
+    if (username.length() > 11) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Username must not exceed 11 characters!",
+            "Validation Error",
+            javax.swing.JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    // 3. Login validation
     if (username.equals("admin") && password.equals("admin")) {
-        new view.Admin().setVisible(true); // Opens Admin panel
+        new view.Admin().setVisible(true);
         this.dispose();
-    } else if (username.equals("user") && password.equals("user")) {
-        new view.Customer().setVisible(true); // Opens Customer panel
+    } 
+    else if (username.equals("user") && password.equals("user")) {
+        new view.Customer().setVisible(true);
         this.dispose();
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, "Invalid Login");
-    }     // TODO add your handling code here:
+    } 
+    else {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Invalid Login Credentials",
+            "Login Failed",
+            javax.swing.JOptionPane.ERROR_MESSAGE
+        );
+        //ODO add your handling code here:
+    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
