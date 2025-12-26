@@ -194,16 +194,15 @@ public class Admin extends javax.swing.JFrame{
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton4)
-                                    .addGroup(jPanel2Layout.createSequentialGroup()
-                                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jToggleButton1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(6, 6, 6))))
+                                .addComponent(jButton4)
+                                .addGap(0, 221, Short.MAX_VALUE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jToggleButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap())))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton5)
@@ -246,7 +245,6 @@ public class Admin extends javax.swing.JFrame{
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 519, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)))
-                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -280,30 +278,69 @@ public class Admin extends javax.swing.JFrame{
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
   // Get table model
-    javax.swing.table.DefaultTableModel model =
-            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
 
-    // Input dialogs
-    String name = javax.swing.JOptionPane.showInputDialog(this, "Enter Name:");
-    if (name == null || name.trim().isEmpty()) return;
+    // Input dialogs with validation and retry
+    String name = "";
+    while (true) {
+        name = javax.swing.JOptionPane.showInputDialog(this, "Enter Name:");
+        if (name == null) {
+            return; // User clicked Cancel
+        }
+        if (!name.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Name cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-    String brand = javax.swing.JOptionPane.showInputDialog(this, "Enter Brand:");
-    if (brand == null || brand.trim().isEmpty()) return;
+    String brand = "";
+    while (true) {
+        brand = javax.swing.JOptionPane.showInputDialog(this, "Enter Brand:");
+        if (brand == null) {
+            return; // User clicked Cancel
+        }
+        if (!brand.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Brand cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-    String ModelNo = javax.swing.JOptionPane.showInputDialog(this, "Enter Model:");
-    if (ModelNo == null || ModelNo.trim().isEmpty()) return;
+    String ModelNo = "";
+    while (true) {
+        ModelNo = javax.swing.JOptionPane.showInputDialog(this, "Enter Model:");
+        if (ModelNo == null) {
+            return; // User clicked Cancel
+        }
+        if (!ModelNo.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Model number cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-    String carType = javax.swing.JOptionPane.showInputDialog(this, "Enter Car Type:");
-    if (carType == null || carType.trim().isEmpty()) return;
+    String carType = "";
+    while (true) {
+        carType = javax.swing.JOptionPane.showInputDialog(this, "Enter Car Type:");
+        if (carType == null) {
+            return; // User clicked Cancel
+        }
+        if (!carType.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Car type cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
     // Auto serial number
     int sno = model.getRowCount() + 1;
 
     // Add row to table
     model.addRow(new Object[] { sno, name, brand, ModelNo, carType });
-     car.addNewCar(name, brand, ModelNo, carType, model);
+    car.addNewCar(name, brand, ModelNo, carType, model);
         
-        // Fix serial numbers
+    // Fix serial numbers
+    fixSerialNumbers();
+    
+    // Success message
+    JOptionPane.showMessageDialog(this, "Car added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         fixSerialNumbers();
 
 
@@ -358,42 +395,83 @@ int selectedRow = jTable1.getSelectedRow();
     }//GEN-LAST:event_txtSearchKeyReleased
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
- javax.swing.table.DefaultTableModel model =
-            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
 
     int viewRow = jTable1.getSelectedRow();
 
-        if (viewRow == -1) {
-            JOptionPane.showMessageDialog(
-                this,
-                "Please select a row to update",
-                "No Selection",
-                JOptionPane.WARNING_MESSAGE
-            );
-            return;
+    if (viewRow == -1) {
+        JOptionPane.showMessageDialog(
+            this,
+            "Please select a row to update",
+            "No Selection",
+            JOptionPane.WARNING_MESSAGE
+        );
+        return;
+    }
+
+    // Convert view index to model index
+    int modelRow = jTable1.convertRowIndexToModel(viewRow);
+
+    // Current values (skip SNo column 0)
+    String currentName = model.getValueAt(modelRow, 1).toString();
+    String currentBrand = model.getValueAt(modelRow, 2).toString();
+    String currentPlate = model.getValueAt(modelRow, 3).toString();
+    String currentType = model.getValueAt(modelRow, 4).toString();
+
+    // Input dialogs with validation and retry
+    String name = "";
+    while (true) {
+        name = JOptionPane.showInputDialog(this, "Update Name:", currentName);
+        if (name == null) {
+            return; // User clicked Cancel
         }
+        if (!name.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Name cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-        // Convert view index to model index
-        int modelRow = jTable1.convertRowIndexToModel(viewRow);
+    String brand = "";
+    while (true) {
+        brand = JOptionPane.showInputDialog(this, "Update Brand:", currentBrand);
+        if (brand == null) {
+            return; // User clicked Cancel
+        }
+        if (!brand.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Brand cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-        // Current values (skip SNo column 0)
-        String currentName = model.getValueAt(modelRow, 1).toString();
-        String currentBrand = model.getValueAt(modelRow, 2).toString();
-        String currentPlate = model.getValueAt(modelRow, 3).toString();
-        String currentType = model.getValueAt(modelRow, 4).toString();
+    String ModelNo = "";
+    while (true) {
+        ModelNo = JOptionPane.showInputDialog(this, "Update Model:", currentPlate);
+        if (ModelNo == null) {
+            return; // User clicked Cancel
+        }
+        if (!ModelNo.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Model number cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-        // Input dialogs with old values
-        String name = JOptionPane.showInputDialog(this, "Update Name:", currentName);
-        if (name == null || name.trim().isEmpty()) return;
+    String carType = "";
+    while (true) {
+        carType = JOptionPane.showInputDialog(this, "Update Car Type:", currentType);
+        if (carType == null) {
+            return; // User clicked Cancel
+        }
+        if (!carType.trim().isEmpty()) {
+            break; // Valid input
+        }
+        JOptionPane.showMessageDialog(this, "Car type cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+    }
 
-        String brand = JOptionPane.showInputDialog(this, "Update Brand:", currentBrand);
-        if (brand == null || brand.trim().isEmpty()) return;
-
-        String ModelNo = JOptionPane.showInputDialog(this, "Update Model:", currentPlate);
-        if (ModelNo == null || ModelNo.trim().isEmpty()) return;
-
-        String carType = JOptionPane.showInputDialog(this, "Update Car Type:", currentType);
-        if (carType == null || carType.trim().isEmpty()) return;
+    // Use Controller to update car
+    car.updateCar(modelRow, name, brand, ModelNo, carType, model);
+    
+    // Success message
+    JOptionPane.showMessageDialog(this, "Car updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
 
         // Use Controller to update car
         car.updateCar(modelRow, name, brand, ModelNo, carType, model);
