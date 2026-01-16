@@ -78,7 +78,6 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        txtUsername.setText("sadfasf");
         txtUsername.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtUsernameActionPerformed(evt);

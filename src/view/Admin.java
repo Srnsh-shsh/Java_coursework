@@ -18,8 +18,9 @@ public class Admin extends javax.swing.JFrame{
     private javax.swing.table.TableRowSorter<javax.swing.table.DefaultTableModel> sorter;
         private DefaultTableModel model; 
     
-
-    
+private java.util.Stack<Object[]> undoStack = new java.util.Stack<>();
+    // This Queue stores the index of rows marked for deletion (FIFO)
+private java.util.Queue<Integer> deleteQueue = new java.util.LinkedList<>();
     public Admin() {
          initComponents();  // GUI components created first
         
@@ -58,6 +59,11 @@ public class Admin extends javax.swing.JFrame{
     private void initComponents() {
 
         jProgressBar1 = new javax.swing.JProgressBar();
+        popupMenu1 = new java.awt.PopupMenu();
+        popupMenu2 = new java.awt.PopupMenu();
+        panel1 = new java.awt.Panel();
+        popupMenu3 = new java.awt.PopupMenu();
+        jScrollBar1 = new javax.swing.JScrollBar();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
@@ -72,6 +78,23 @@ public class Admin extends javax.swing.JFrame{
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+
+        popupMenu1.setLabel("popupMenu1");
+
+        popupMenu2.setLabel("popupMenu2");
+
+        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
+        panel1.setLayout(panel1Layout);
+        panel1Layout.setHorizontalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        panel1Layout.setVerticalGroup(
+            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        popupMenu3.setLabel("popupMenu3");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -194,15 +217,15 @@ public class Admin extends javax.swing.JFrame{
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jButton4)
-                                .addGap(0, 221, Short.MAX_VALUE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jToggleButton1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addContainerGap())))
+                                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jButton4)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton5)
@@ -276,266 +299,31 @@ public class Admin extends javax.swing.JFrame{
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-  // Get table model
-    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-
-    // Input dialogs with validation and retry
-    String name = "";
-    while (true) {
-        name = javax.swing.JOptionPane.showInputDialog(this, "Enter Name:");
-        if (name == null) {
-            return; // User clicked Cancel
-        }
-        if (!name.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Name cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    String brand = "";
-    while (true) {
-        brand = javax.swing.JOptionPane.showInputDialog(this, "Enter Brand:");
-        if (brand == null) {
-            return; // User clicked Cancel
-        }
-        if (!brand.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Brand cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    String ModelNo = "";
-    while (true) {
-        ModelNo = javax.swing.JOptionPane.showInputDialog(this, "Enter Model:");
-        if (ModelNo == null) {
-            return; // User clicked Cancel
-        }
-        if (!ModelNo.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Model number cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    String carType = "";
-    while (true) {
-        carType = javax.swing.JOptionPane.showInputDialog(this, "Enter Car Type:");
-        if (carType == null) {
-            return; // User clicked Cancel
-        }
-        if (!carType.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Car type cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    // Auto serial number
-    int sno = model.getRowCount() + 1;
-
-    // Add row to table
-    model.addRow(new Object[] { sno, name, brand, ModelNo, carType });
-    car.addNewCar(name, brand, ModelNo, carType, model);
-        
-    // Fix serial numbers
-    fixSerialNumbers();
-    
-    // Success message
-    JOptionPane.showMessageDialog(this, "Car added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-        fixSerialNumbers();
-
-
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-int selectedRow = jTable1.getSelectedRow();
-        
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                "Please select a row to delete!", 
-                "No Selection", 
-                JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-        
-        // Convert view index to model index (important for search)
-        int modelRow = jTable1.convertRowIndexToModel(selectedRow);
-        
-        int confirm = JOptionPane.showConfirmDialog(this,
-            "Are you sure you want to delete this car?",
-            "Confirm Delete",
-            JOptionPane.YES_NO_OPTION);
-        
-        if (confirm == JOptionPane.YES_OPTION) {
-            // Use Controller to delete car
-            car.deleteCar(modelRow, model);
-            
-            // Fix serial numbers after deletion
-            fixSerialNumbers();
-        }        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSearchActionPerformed
-
-    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtSearchKeyPressed
-
-    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
-        String text = txtSearch.getText();
-
-    if (text.trim().isEmpty()) {
-        sorter.setRowFilter(null);
-    } else {
-        sorter.setRowFilter(
-            javax.swing.RowFilter.regexFilter("(?i)" + text)
-        );
-    }
-    }//GEN-LAST:event_txtSearchKeyReleased
-
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
-
-    int viewRow = jTable1.getSelectedRow();
-
-    if (viewRow == -1) {
-        JOptionPane.showMessageDialog(
-            this,
-            "Please select a row to update",
-            "No Selection",
-            JOptionPane.WARNING_MESSAGE
-        );
-        return;
-    }
-
-    // Convert view index to model index
-    int modelRow = jTable1.convertRowIndexToModel(viewRow);
-
-    // Current values (skip SNo column 0)
-    String currentName = model.getValueAt(modelRow, 1).toString();
-    String currentBrand = model.getValueAt(modelRow, 2).toString();
-    String currentPlate = model.getValueAt(modelRow, 3).toString();
-    String currentType = model.getValueAt(modelRow, 4).toString();
-
-    // Input dialogs with validation and retry
-    String name = "";
-    while (true) {
-        name = JOptionPane.showInputDialog(this, "Update Name:", currentName);
-        if (name == null) {
-            return; // User clicked Cancel
-        }
-        if (!name.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Name cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    String brand = "";
-    while (true) {
-        brand = JOptionPane.showInputDialog(this, "Update Brand:", currentBrand);
-        if (brand == null) {
-            return; // User clicked Cancel
-        }
-        if (!brand.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Brand cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    String ModelNo = "";
-    while (true) {
-        ModelNo = JOptionPane.showInputDialog(this, "Update Model:", currentPlate);
-        if (ModelNo == null) {
-            return; // User clicked Cancel
-        }
-        if (!ModelNo.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Model number cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    String carType = "";
-    while (true) {
-        carType = JOptionPane.showInputDialog(this, "Update Car Type:", currentType);
-        if (carType == null) {
-            return; // User clicked Cancel
-        }
-        if (!carType.trim().isEmpty()) {
-            break; // Valid input
-        }
-        JOptionPane.showMessageDialog(this, "Car type cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
-    }
-
-    // Use Controller to update car
-    car.updateCar(modelRow, name, brand, ModelNo, carType, model);
-    
-    // Success message
-    JOptionPane.showMessageDialog(this, "Car updated successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-        // Use Controller to update car
-        car.updateCar(modelRow, name, brand, ModelNo, carType, model);
-           // TODO add your handling code here:
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
-    javax.swing.table.DefaultTableModel model =
-            (javax.swing.table.DefaultTableModel) jTable1.getModel();
-    int rowCount = model.getRowCount();
-
-    // SELECTION SORT LOGIC
-    for (int i = 0; i < rowCount - 1; i++) {
-        int minIndex = i;
-        for (int j = i + 1; j < rowCount; j++) {
-            // Compare Name column (Index 1)
-            String nameJ = model.getValueAt(j, 1).toString();
-            String nameMin = model.getValueAt(minIndex, 1).toString();
-            
-            if (nameJ.compareToIgnoreCase(nameMin) < 0) {
-                minIndex = j;
-            }
-        }
-        // Swap rows directly in the model
-        for (int col = 0; col < model.getColumnCount(); col++) {
-            Object temp = model.getValueAt(i, col);
-            model.setValueAt(model.getValueAt(minIndex, col), i, col);
-            model.setValueAt(temp, minIndex, col);
-        }
-    }
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        car.saveAllCars(model);
-        JOptionPane.showMessageDialog(this, "All data saved to file!");  
-        Controller.car.syncAllTables();
-    }//GEN-LAST:event_jButton4ActionPerformed
-
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    int rowCount = model.getRowCount();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        int rowCount = model.getRowCount();
 
-    for (int i = 0; i < rowCount - 1; i++) {
-        int minIndex = i;
-        for (int j = i + 1; j < rowCount; j++) {
-            // Compare SNo column (Index 0) as Integers
-            int snoJ = Integer.parseInt(model.getValueAt(j, 0).toString());
-            int snoMin = Integer.parseInt(model.getValueAt(minIndex, 0).toString());
-            
-            if (snoJ < snoMin) {
-                minIndex = j;
+        for (int i = 0; i < rowCount - 1; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j < rowCount; j++) {
+                // Compare SNo column (Index 0) as Integers
+                int snoJ = Integer.parseInt(model.getValueAt(j, 0).toString());
+                int snoMin = Integer.parseInt(model.getValueAt(minIndex, 0).toString());
+
+                if (snoJ < snoMin) {
+                    minIndex = j;
+                }
+            }
+            // Swap rows
+            for (int col = 0; col < model.getColumnCount(); col++) {
+                Object temp = model.getValueAt(i, col);
+                model.setValueAt(model.getValueAt(minIndex, col), i, col);
+                model.setValueAt(temp, minIndex, col);
             }
         }
-        // Swap rows
-        for (int col = 0; col < model.getColumnCount(); col++) {
-            Object temp = model.getValueAt(i, col);
-            model.setValueAt(model.getValueAt(minIndex, col), i, col);
-            model.setValueAt(temp, minIndex, col);
-        }
-    }
-    
-    // Clear any active search filters
-    if (sorter != null) sorter.setRowFilter(null);
+
+        // Clear any active search filters
+        if (sorter != null) sorter.setRowFilter(null);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
@@ -547,6 +335,238 @@ DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         // Close or hide the current Admin frame
         this.dispose();        // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        car.saveAllCars(model);
+        JOptionPane.showMessageDialog(this, "All data saved to file!");
+        Controller.car.syncAllTables();
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void txtSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyReleased
+        String text = txtSearch.getText();
+
+        if (text.trim().isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            sorter.setRowFilter(
+                javax.swing.RowFilter.regexFilter("(?i)" + text)
+            );
+        }
+    }//GEN-LAST:event_txtSearchKeyReleased
+
+    private void txtSearchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchKeyPressed
+
+    private void txtSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSearchActionPerformed
+
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+
+        int viewRow = jTable1.getSelectedRow();
+
+        if (viewRow == -1) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Please select a row to update",
+                "No Selection",
+                JOptionPane.WARNING_MESSAGE
+            );
+            return;
+        }
+
+        // Convert view index to model index
+        int modelRow = jTable1.convertRowIndexToModel(viewRow);
+
+        // Current values (skip SNo column 0)
+        String currentName = model.getValueAt(modelRow, 1).toString();
+        String currentBrand = model.getValueAt(modelRow, 2).toString();
+        String currentPlate = model.getValueAt(modelRow, 3).toString();
+        String currentType = model.getValueAt(modelRow, 4).toString();
+
+        // Input dialogs with validation and retry
+        String name = "";
+        while (true) {
+            name = JOptionPane.showInputDialog(this, "Update Name:", currentName);
+            if (name == null) {
+                return; // User clicked Cancel
+            }
+            if (!name.trim().isEmpty()) {
+                break; // Valid input
+            }
+            JOptionPane.showMessageDialog(this, "Name cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        String brand = "";
+        while (true) {
+            brand = JOptionPane.showInputDialog(this, "Update Brand:", currentBrand);
+            if (brand == null) {
+                return; // User clicked Cancel
+            }
+            if (!brand.trim().isEmpty()) {
+                break; // Valid input
+            }
+            JOptionPane.showMessageDialog(this, "Brand cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        String ModelNo = "";
+        while (true) {
+            ModelNo = JOptionPane.showInputDialog(this, "Update Model:", currentPlate);
+            if (ModelNo == null) {
+                return; // User clicked Cancel
+            }
+            if (!ModelNo.trim().isEmpty()) {
+                break; // Valid input
+            }
+            JOptionPane.showMessageDialog(this, "Model number cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        String carType = "";
+        while (true) {
+            carType = JOptionPane.showInputDialog(this, "Update Car Type:", currentType);
+            if (carType == null) {
+                return; // User clicked Cancel
+            }
+            if (!carType.trim().isEmpty()) {
+                break; // Valid input
+            }
+            JOptionPane.showMessageDialog(this, "Car type cannot be empty!", "Validation Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        // Use Controller to update car
+        car.updateCar(modelRow, name, brand, ModelNo, carType, model);
+
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+
+        javax.swing.table.DefaultTableModel model =
+        (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        int rowCount = model.getRowCount();
+
+        // SELECTION SORT LOGIC
+        for (int i = 0; i < rowCount - 1; i++) {
+            int minIndex = i;
+            for (int j = i + 1; j < rowCount; j++) {
+                // Compare Name column (Index 1)
+                String nameJ = model.getValueAt(j, 1).toString();
+                String nameMin = model.getValueAt(minIndex, 1).toString();
+
+                if (nameJ.compareToIgnoreCase(nameMin) < 0) {
+                    minIndex = j;
+                }
+            }
+            // Swap rows directly in the model
+            for (int col = 0; col < model.getColumnCount(); col++) {
+                Object temp = model.getValueAt(i, col);
+                model.setValueAt(model.getValueAt(minIndex, col), i, col);
+                model.setValueAt(temp, minIndex, col);
+            }
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        int selectedRow = jTable1.getSelectedRow();
+
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Please select a row to delete!",
+                "No Selection",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Convert view index to model index (important for search/sorting)
+        int modelRow = jTable1.convertRowIndexToModel(selectedRow);
+
+        // --- 1. Use the QUEUE (Enqueue the task) ---
+        // We add the row index to the back of the queue
+        deleteQueue.add(modelRow);
+
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+            "Do you want to delete the from the car?",
+            "Confirm Delete",
+            javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirm == javax.swing.JOptionPane.YES_OPTION) {
+            
+            // --- 2. Process the QUEUE (Poll the task) ---
+            // .poll() retrieves and removes the head of the queue (FIFO)
+            int rowToDelete = deleteQueue.poll();
+
+            // Use your existing Controller to delete car
+            car.deleteCar(rowToDelete, (javax.swing.table.DefaultTableModel)jTable1.getModel());
+
+            // Fix serial numbers after deletion
+            fixSerialNumbers();
+            
+         
+        } else {
+            // If user says NO, we clear the queue so the task isn't stuck there
+            deleteQueue.clear();
+            javax.swing.JOptionPane.showMessageDialog(this, "Car was not deleted from Queue!");
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+      javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+
+        // --- 1. Input dialogs with validation ---
+        String name = "";
+        while (true) {
+            name = javax.swing.JOptionPane.showInputDialog(this, "Enter Name:");
+            if (name == null) return; 
+            if (!name.trim().isEmpty()) break;
+            javax.swing.JOptionPane.showMessageDialog(this, "Name cannot be empty!", "Validation Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+        String brand = "";
+        while (true) {
+            brand = javax.swing.JOptionPane.showInputDialog(this, "Enter Brand:");
+            if (brand == null) return;
+            if (!brand.trim().isEmpty()) break;
+            javax.swing.JOptionPane.showMessageDialog(this, "Brand cannot be empty!", "Validation Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+        String ModelNo = "";
+        while (true) {
+            ModelNo = javax.swing.JOptionPane.showInputDialog(this, "Enter Model:");
+            if (ModelNo == null) return;
+            if (!ModelNo.trim().isEmpty()) break;
+            javax.swing.JOptionPane.showMessageDialog(this, "Model number cannot be empty!", "Validation Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+        String carType = "";
+        while (true) {
+            carType = javax.swing.JOptionPane.showInputDialog(this, "Enter Car Type:");
+            if (carType == null) return;
+            if (!carType.trim().isEmpty()) break;
+            javax.swing.JOptionPane.showMessageDialog(this, "Car type cannot be empty!", "Validation Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+        // --- 2. Use the STACK (Push data) ---
+        int sno = model.getRowCount() + 1;
+        
+        // We "Push" the new car data onto the stack as an array
+        undoStack.push(new Object[] { sno, name, brand, ModelNo, carType });
+
+        // --- 3. Retrieve from Stack to Update Table/Controller ---
+        // We use peek() to look at the top of the stack without removing it
+        Object[] lastAdded = undoStack.peek();
+
+        // Add row to table using the data we just got from the stack
+        model.addRow(lastAdded);
+        
+        // Pass the stack data to your existing controller method
+        car.addNewCar(lastAdded[1].toString(), lastAdded[2].toString(), 
+                      lastAdded[3].toString(), lastAdded[4].toString(), model);
+
+        // --- 4. Finalize ---
+        fixSerialNumbers();
+       
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -585,9 +605,14 @@ DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JProgressBar jProgressBar1;
+    private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JToggleButton jToggleButton1;
+    private java.awt.Panel panel1;
+    private java.awt.PopupMenu popupMenu1;
+    private java.awt.PopupMenu popupMenu2;
+    private java.awt.PopupMenu popupMenu3;
     private javax.swing.JTextField txtSearch;
     // End of variables declaration//GEN-END:variables
 }

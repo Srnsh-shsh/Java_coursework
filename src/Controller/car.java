@@ -4,8 +4,11 @@ import Model.gettersetter;
 import javax.swing.table.DefaultTableModel;
 import java.io.*;
 import javax.swing.JOptionPane;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.Queue;
 
 public class car {
     private String name;
@@ -14,6 +17,117 @@ public class car {
     private String carType;
     
     private static final String FILE_NAME = "cars.txt";
+    
+    private static final ArrayList<gettersetter> carList = new ArrayList<>();
+
+// LinkedList → recent add/delete tracking
+private static final LinkedList<gettersetter> recentCars = new LinkedList<>();
+
+// Stack → undo delete (LIFO)
+private static final Stack<gettersetter> deletedCars = new Stack<>();
+
+// Queue → customer view loading (FIFO)
+private static final Queue<gettersetter> customerQueue = new LinkedList<>();
+
+public static void addNewCar(gettersetter car) {
+    carList.add(car);              // ArrayList
+    recentCars.addFirst(car);      // LinkedList
+    refreshAllTables();
+}
+public static void updateCar(int index, gettersetter updatedCar) {
+    if (index >= 0 && index < carList.size()) {
+        carList.set(index, updatedCar);
+        refreshAllTables();
+    }
+}
+
+public static void deleteCar(int index) {
+    if (index >= 0 && index < carList.size()) {
+        gettersetter removed = carList.remove(index);
+
+        deletedCars.push(removed);     // Stack
+        recentCars.addFirst(removed);  // LinkedList
+
+        refreshAllTables();
+    }
+}
+
+public static void undoDelete() {
+    if (!deletedCars.isEmpty()) {
+        gettersetter restored = deletedCars.pop();
+        carList.add(restored);
+        refreshAllTables();
+    }
+}
+public static ArrayList<Object[]> getAllCarsAsList() {
+    ArrayList<Object[]> list = new ArrayList<>();
+    
+    try {
+        // Assuming you are reading from a file, logic is similar to your load method
+        java.io.File file = new java.io.File("car_data.txt"); // Use your actual file path
+        if (!file.exists()) return list;
+
+        java.io.BufferedReader br = new java.io.BufferedReader(new java.io.FileReader(file));
+        String line;
+        while ((line = br.readLine()) != null) {
+            String[] data = line.split(","); // Or your specific delimiter
+            // storage: {Name, Brand, Model, Type}
+            list.add(new Object[]{ data[0], data[1], data[2], data[3] });
+        }
+        br.close();
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+public static void loadCarsFromFileIntoList() {
+    carList.clear(); // avoid duplicates
+    File file = new File(FILE_NAME);
+    if (!file.exists()) return;
+
+    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        String line;
+        int sno = 1;
+        while ((line = reader.readLine()) != null) {
+            String[] data = line.split(",");
+            if (data.length == 4) {
+                gettersetter c = new gettersetter(sno++, data[0], data[1], data[2], data[3]);
+                carList.add(c);
+            }
+        }
+    } catch (IOException e) {
+        System.err.println("Error reading file: " + e.getMessage());
+    }
+}
+
+public static void loadCustomerTable(DefaultTableModel model) {
+    model.setRowCount(0);
+
+    customerQueue.clear();
+    customerQueue.addAll(carList); // Queue FIFO
+
+    while (!customerQueue.isEmpty()) {
+        model.addRow(customerQueue.poll().toTableRow());
+    }
+}
+public static void loadAdminTable(DefaultTableModel model) {
+    model.setRowCount(0);
+    for (gettersetter car : carList) {
+        model.addRow(car.toTableRow());
+    }
+}
+
+private static void refreshAllTables() {
+    for (DefaultTableModel model : adminTables) {
+        loadAdminTable(model);
+    }
+    for (DefaultTableModel model : customerTables) {
+        loadCustomerTable(model);
+    }
+}
+
+
+
     
     // Lists to track open tables for synchronization
     private static List<DefaultTableModel> customerTables = new ArrayList<>();
@@ -68,10 +182,6 @@ public class car {
         return false;
     }
     
-    /**
-     * NEW METHOD: Checks for duplicates in the FILE, not in the table model
-     * This prevents the issue where the car is already in the table before validation
-     */
     public static boolean isModelNoExistsInFile(String ModelNo, int excludeSNo) {
         String searchModelNo = ModelNo.trim().toLowerCase();
         File file = new File(FILE_NAME);
@@ -160,7 +270,7 @@ public static void addNewCar(String name, String brand, String ModelNo, String c
     try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
         writer.println(csvLine);
         syncAllTables();
-        JOptionPane.showMessageDialog(null, "Car added and synchronized!");
+        JOptionPane.showMessageDialog(null, "Car added!");
     } catch (IOException e) {
         JOptionPane.showMessageDialog(null, "Error saving to file: " + e.getMessage());
     }
@@ -210,21 +320,23 @@ public static void addNewCar(String name, String brand, String ModelNo, String c
             String carBrand = model.getValueAt(rowIndex, 2).toString();
             String carModelNo = model.getValueAt(rowIndex, 3).toString();
             
-            int confirm = JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want to delete this car?\n\n" +
+            int confirm = javax.swing.JOptionPane.showConfirmDialog(null, 
+                "Are you sure you want to delete this car?\n" +
                 carBrand + " " + carName + "\n" +
                 "Model: " + carModelNo,
                 "Confirm Delete", 
-                JOptionPane.YES_NO_OPTION);
+                javax.swing.JOptionPane.YES_NO_OPTION);
                 
-            if (confirm == JOptionPane.YES_OPTION) {
+            if (confirm == javax.swing.JOptionPane.YES_OPTION) {
                 model.removeRow(rowIndex);
                 saveAllCars(model);
                 syncAllTables();
-                JOptionPane.showMessageDialog(null, "Car deleted successfully!");
+                javax.swing.JOptionPane.showMessageDialog(null, "deleted from Queue!");
+                
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Please select a car to delete!");
+            
+            javax.swing.JOptionPane.showMessageDialog(null, "Please select a car to delete!");
         }
     }
 
