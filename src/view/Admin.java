@@ -190,7 +190,7 @@ private java.util.Queue<Integer> deleteQueue = new java.util.LinkedList<>();
             }
         });
 
-        jButton6.setText("Default");
+        jButton6.setText("Sort Serial order");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -321,7 +321,10 @@ private java.util.Queue<Integer> deleteQueue = new java.util.LinkedList<>();
                 model.setValueAt(temp, minIndex, col);
             }
         }
-
+                javax.swing.JOptionPane.showMessageDialog(this,
+                "Sorted By Serial Number!",
+                "Sort",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
         // Clear any active search filters
         if (sorter != null) sorter.setRowFilter(null);
     }//GEN-LAST:event_jButton6ActionPerformed
@@ -465,6 +468,10 @@ private java.util.Queue<Integer> deleteQueue = new java.util.LinkedList<>();
                 model.setValueAt(temp, minIndex, col);
             }
         }
+        javax.swing.JOptionPane.showMessageDialog(this,
+                "Sorted alphadetically!",
+                "Sort",
+                javax.swing.JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
